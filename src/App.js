@@ -114,7 +114,8 @@ class  App extends React.Component {
     }
       
     render(){
-     const  {onInputChange,onSubmitClick,onRouteChange} = this;
+      // #add comments
+    const  {onInputChange,onSubmitClick,onRouteChange} = this;
   return (
     
      <div>  
