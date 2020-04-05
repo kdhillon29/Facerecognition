@@ -1,19 +1,21 @@
 import React from 'react';
 //import { findByLabelText } from '@testing-library/react';
+import CardProfile from '../profilemenu/profilemenu';
+import {Link} from 'react-router-dom';
+ const Navigation = ({handleClick,isLogin,user}) => {
 
-
- const Navigation = ({handleClick,isSignIn}) => {
-
-         return isSignIn?(
-              <nav className ="mt1 pa2 mr4">  
-                 <p onClick={()=>handleClick('signin')} className="f3 link dim white pointer pa3 underline mt0 "> Sign Out  </p> 
+         return isLogin?(
+              <nav className ="mt1 pa2 mr4 f3  pointer ">  
+      
+                      <CardProfile handleclick={handleClick} user={user}/> 
               </nav>
 
          ):
          (
-            <nav className ="mt1 pa2 mr2">  
-               <p onClick={()=>handleClick('signin')} className="f3 link dib white pointer pa3 underline mt0 "> Sign In  </p> 
-               <p onClick={()=>handleClick('register')} className="f3 link dib white pointer pa3 underline mt0 "> Register  </p> 
+            <nav className ="mt1 pa1 mr3" style={{display:'flex',justifyContent:'right'}}> 
+                <Link to='/'  className="f4  grow shadow-3 mr3 link white pointer pa2 underline  "> Home  </Link>  
+               <Link to='/signin'  className="f4  grow shadow-3 mr3 link white pointer pa2 underline  "> SignIn  </Link> 
+               <Link to='/register' className="f4 grow shadow-3 mr3 link white pointer pa2 underline  "> Register  </Link> 
             </nav>
          )
     

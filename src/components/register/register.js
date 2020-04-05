@@ -49,7 +49,7 @@ const defaultOptions2 = {
     preserveAspectRatio: "xMidYMid slice"
   }
 };
-class Login extends React.Component {
+class Register extends React.Component {
 
   constructor(props) {
     super(props);
@@ -61,19 +61,11 @@ class Login extends React.Component {
       error: '',
       register: { name: '', email: '', password: '' },
       isEmpty: { name: '', email: '', password: '' },
-      redirectToReferrer:false,
-      redirect:'',
+      redirectToSignin:false
     }
 
   }
-  handleChange = (event) => {
-    this.setState({ error: '' });
-    console.log("event is", event.target.name, event.target.value)
-    this.setState({ [event.target.name]: event.target.value });
-
-    //console.log(this.state)
-  }
-
+  
   handleRegisterChange = (e) => {
     this.setState({ error: '', isEmpty: { ...this.state.isEmpty, [e.target.name]: false } });
     console.log("event is", e.target.name, e.target.value)
@@ -83,85 +75,73 @@ class Login extends React.Component {
 
 
 
-  handleSignin = () => {
-    console.log('props are',this.props);
-   
-    
+  
+  handleRegister = () => {
     this.setState({ loading: true });
+    let isEmpty = [];
+    let name, email, password;
+    if (this.state.register.name == '') { name = true; }
+    if (this.state.register.email == '') { email = true; }
+    if (this.state.register.password == '') { password = true; }
+    console.log("isempty", isEmpty)
+
+
+
+    this.setState({ isEmpty: { ...this.state.isEmpty, email, name, password } })
+    console.log("in state", this.state.isEmpty)
+    // let name =document.getElementsByName(el);
+    // console.log(name[0]);
+    // name[0].style.border='1px solid red';
+
+
     setTimeout(() => {
 
-      fetch('http://localhost:3000/signin', {
+      fetch('http://localhost:3000/register', {
         method: 'post',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ "email": this.state.email, "password": this.state.password })
+        body: JSON.stringify(this.state.register)
 
       })
         .then(response => response.json())
         .then(data => {
           this.setState({ loading: false });
-          if (data.user) {
-            this.setState({ success: true,redirectToReferrer:true })
-           const redirect = this.props.loaduser(data.user);
-           this.setState({redirect});
-           console.log("redirect is",redirect)
-            console.log("data is:", data.user);
-
-           // setTimeout(() => this.props.handleClick('home'), 2000)
+          if (data.id) {
+            this.setState({ success: true })
+            console.log("data is:", data);
+           // this.props.loaduser(data.user);
+            setTimeout(() => {this.setState({success:false,redirectToSignin:true});}, 3000)
           }
 
-          else {
-            this.setState({ error: data.error });
-            console.log('cant login:', data);
-          }
+          else if (!data.id) {
+           this.setState({ error: data.error });
+             console.log('cant login:', data);
+           }
         })
-        .catch(err => console.log("error happened:", err))
+        .catch(err => {
+          this.setState({ error: err });
+          console.log("error happened:", err);
+        })
     }, 2000)
 
 
+
   }
-  
-
-
-
-
-
-
-  
   render() {
-    //if(this.state.redirect) return this.state.redirect;
-    const { from } = this.props.location.state || { from: { pathname: '/' } }
-    const { redirectToReferrer } = this.state
-    console.log('referre is', redirectToReferrer);
-    console.log('from is',from)
-    if (redirectToReferrer === true) {
-      return <Redirect to={{pathname:from.pathname, state:{ isLogin:true} }} />
-    }
-    const { handleClick, register } = this.props;
+    // const { from } = this.props.location.state || { from: { pathname: '/' } }
+    // const { redirectToReferrer } = this.state
+    // console.log('referre is', redirectToReferrer);
+    // console.log('from is',from)
+    // if (redirectToReferrer === true) {
+    //   return <Redirect to={{pathname:'/register', state:{ isLogin:true}}} />
+    // }
+    //const { handleClick, register } = this.props;
     const { loading } = this.state;
     const { name, email, password } = this.state.isEmpty;
-    
-    return !register ? (
-      <StyledLogin className="shadow-5">
-        <h1 style={{fontWeight:'700',padding:'1px',textAlign:'center', marginTop:'0px', width:'100%',background:'lime'}}>Login</h1>
+    if(this.state.redirectToSignin){return <Redirect to='/signin' />
+    }
+       
+    return(
 
-        <FadeIn>
-          <div>{this.state.error ? <p style={{ color: 'red' }}>Error:{this.state.error}</p> : ''}</div>
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            {this.state.loading || this.state.success ? <h1>Signining in</h1> : ""}
-            {this.state.loading ? <ReactLoading type={"bars"} color={"white"} /> : ''}
-            {this.state.success ? <Lottie options={defaultOptions2} height={120} width={120} /> : ''}
-          </div>
-        </FadeIn>
-
-
-
-
-        <StyledInput onChange={this.handleChange} name="email" type="text" placeholder="email" />
-        <StyledInput onChange={this.handleChange} name="password" type="password" placeholder="password" />
-        <button onClick={this.handleSignin} className="grow ">Login</button>
-      </StyledLogin>
-    )
-      : (
         <StyledLogin className="shadow-5">
           <h1 className="tc mt0 pa1" style={{fontWeight:'700',width:'100%',background:'magenta'}}>Register</h1>
           <FadeIn>
@@ -203,4 +183,4 @@ class Login extends React.Component {
 //     </StyledLogin>
 //   );
 
-export default Login;
+export default Register;
